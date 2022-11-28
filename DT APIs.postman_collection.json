@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "450f88fe-9932-4e82-bf02-5d3debaa7b87",
+		"name": "DT APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13787572"
+	},
+	"item": [
+		{
+			"name": "Get an event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL\n}}/events?id=63835c8b244b9408bfe6a1b1",
+					"host": [
+						"{{BASE_URL\n}}"
+					],
+					"path": [
+						"events"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "63835c8b244b9408bfe6a1b1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "yami",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "bilaspur",
+							"type": "text"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/govpk/OneDrive/Pictures/Capture1.PNG"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL\n}}/events",
+					"host": [
+						"{{BASE_URL\n}}"
+					],
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL\n}}\n}}/events?page=1&limit=2",
+					"host": [
+						"{{BASE_URL\n}}\n}}"
+					],
+					"path": [
+						"events"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete event",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Update event",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL\n}}/events/638377c5b1866e622dbc5b05",
+					"host": [
+						"{{BASE_URL\n}}"
+					],
+					"path": [
+						"events",
+						"638377c5b1866e622dbc5b05"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL\n",
+			"value": "http://127.0.0.1:3000/api/v3/app",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,155 @@
+const fs = require('fs');
+const express = require('express');
+const app = express();
+const multer  = require('multer');
+const { clear } = require('console');
+// const upload = multer({});
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+var ObjectId = require('mongodb').ObjectID;
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://127.0.0.1:27017";
+
+app.use(express.json());
+
+app.get('/', function (req, res) {
+  res.send('Hello World');
+});
+
+//Update events of a specific ID
+app.put('/api/v3/app/events/:id',upload.single('files'),(req,res)=>{
+
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+   
+    var dbo = db.db("agile");
+    var obj = {};
+    console.log(req.body);
+    var myquery = {_id: ObjectId(req.params.id)};
+    // var newvalues = { $set: { name: req.body.name, address: req.body.address, files: encode, tagline:req.body.tagline, schedule:req.body.schedule, moderator:req.body.moderator, category:req.body.category, sub_category:req.body.sub_category, rigor_rank:req.body.rigor_rank, attendees: [] } };
+
+    if(req.body.name != null || req.body.name != undefined){
+      obj.name = req.body.name;
+    }
+    if(req.file != null || req.file != undefined)
+    {
+      try {
+        const encode = req.file.buffer.toString('base64');
+        obj.files = encode;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if(req.body.address != null || req.body.address != undefined){
+      obj.address = req.body.address;
+    }
+    if(req.body.tagline != null || req.body.tagline != undefined){
+      obj.tagline = req.body.tagline;
+    }
+    if(req.body.schedule != null || req.body.schedule != undefined){
+      obj.schedule = req.body.schedule;
+    }
+    if(req.body.moderator != null || req.body.moderator != undefined){
+      obj.moderator = req.body.moderator;
+    }
+    if(req.body.category != null || req.body.category != undefined){
+      obj.category = req.body.category;
+    }
+    if(req.body.sub_category != null || req.body.sub_category != undefined){
+      obj.sub_category = req.body.sub_category;
+    }
+    if(req.body.rigor_rank != null || req.body.rigor_rank != undefined){
+      obj.rigor_rank = req.body.rigor_rank;
+    }
+    if(req.body.attendees != null || req.body.attendees != undefined){
+      obj.attendees = req.body.attendees;
+    }
+
+
+
+    dbo.collection("evt_tbl").updateOne(myquery, { $set: obj }, function(err, result) {
+      if (err) throw err;
+      res.json(result);
+      db.close();
+    });
+  });
+
+});
+
+//Delete events by ID
+app.delete('/api/v3/app/events/:id', (req,res)=>{
+
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("agile");
+    var myquery = {"_id": ObjectId(req.params.id)};
+    
+    console.log(myquery);
+    dbo.collection("evt_tbl").deleteOne(myquery, function(err, obj) {
+      if (err) throw err;
+      res.json(obj);
+      db.close();
+    });
+  });
+});
+
+app.get('/api/v3/app/events', function (req, res) {
+
+  //Get events by Id
+  if(req.query.id != null && req.query.id != undefined){
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("agile");
+     
+      dbo.collection("evt_tbl").find({"_id": new ObjectId(req.query.id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.json(result);
+        db.close();
+      });
+    });
+  }
+
+  //Get events by limit and page 
+  else if (req.query.page != null && req.query.page != undefined && req.query.limit != 0 && req.query.limit != null && req.query.limit != undefined && req.query.limit != 0) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("agile");
+      var page = parseInt(req.query.page);
+      var limit = parseInt(req.query.limit);
+    
+      dbo.collection("evt_tbl").find({}).skip((page-1)*limit).limit(limit).toArray(function(err, result) {
+        if (err) throw err;
+        res.json({count: result.length,result: result});
+        db.close();
+      });
+    });
+  } else {
+    res.send("Helo World");
+  }
+});
+
+//Post events 
+app.post('/api/v3/app/events',upload.single('files'), (req,res)=>{
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      const encoded = req.file.buffer.toString('base64');
+      var dbo = db.db("agile");
+      console.log(req.body);
+      var myobj = { name: req.body.name, address: req.body.address, files: encoded, tagline:req.body.tagline, schedule:req.body.schedule, moderator:req.body.moderator, category:req.body.category, sub_category:req.body.sub_category, rigor_rank:req.body.rigor_rank, attendees: [] };
+      dbo.collection("evt_tbl").insertOne(myobj, function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        db.close();
+      });
+    });
+  });
+
+
+var port = process.env.PORT || 3000;
+app.listen(port, ()=>{
+    console.log(`Server started at http://localhost:${port}`);
+});
+
+
